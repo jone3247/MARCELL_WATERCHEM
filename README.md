@@ -6,10 +6,16 @@ Reserved Package ID: edi.1126.1
 
 ### Contents
 
-Raw_from_Anne --> Level logger data directly from wells at Marcell. Collected by Anne G. Includes notes about level logger installation/removal and when downloads were taken. 
+**Codes**
 
-Xue_codes --> Initial cleaning codes written by Dr. Xue Feng. Includes half the years and some wells, no temperature processing. 
+Xue_codes - Initial cleaning codes written by Dr. Xue Feng. Includes half the years and some wells, no temperature processing. 
 
-bin --> Updated cleaning codes. Include all years and wells as well as temperature processing. 
+bin - Updated cleaning codes. Include all years and wells as well as temperature processing. 
 
-processed_wte_atm.xlsx --> Cleaned and Filled Data, needs further QAQC. 
+**Data Files**
+
+Raw_from_Anne - Level logger data directly from wells at Marcell. Collected by Anne G. Includes notes about level logger installation/removal and when downloads were taken. 
+
+consolidated logger.xlsx - Compiled Raw Data. No cleaning
+
+processed_wte_atm.xlsx - Cleaned and Filled Data, needs further QAQC. 
