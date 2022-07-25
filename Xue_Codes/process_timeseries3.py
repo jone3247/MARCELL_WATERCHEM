@@ -4,6 +4,7 @@
 Created on Thu Feb 25 21:32:24 2021
 
 @author: xuefeng
+@author: marieljones
 
 Designated workflow: 
     
@@ -20,13 +21,24 @@ Possible issues
     KF series from 2020 still have issues: 43 is offset somehow...? -- fixed by adjusting initial calibration point. 
     S2S, 1-2 in 2019 has a weird shift towards November -- calibration point adjusted, need to double check. 
     S6 elevations are weird in 2020 is shifted, so is bogwell elevation 
+
+
+Data sources: 
+    BP Data -- 
+    Precipitation -- EDI edi.849.2 Marcell Experimental Forest 15-minute precipitation, 2010 - ongoing (Updated 2022-03-04)
+    Bog Well Elevation -- EDI edi.562.2 Marcell Experimental Forest daily peatland water table elevation, 1961 - ongoing (Updated 2021-02-16)
+    
+MWJ - Updated 7/20/2022
+2018-2020 data has been processed and saved to the final location. Data (above) is needed to continue processing the data
+from 2021 and 2022 which Anne sent last month. Two wells, S1 in S2 and S2 in S6 are showing large falls in water table
+between 2019 and 2020 likely caused by shifts in the surveying (?)
 """
 
 #%%
 ''' IMPORT & EXPORT OPTIONS '''
 # well and bog selections
-wellname = 'KF45W'
-year = '2018'
+wellname = 'S2S3'
+year = '2020'
 bogname = 'S2'
 print(wellname, year)
 
@@ -47,30 +59,51 @@ from scipy.signal import find_peaks
 import numba
 
 ''' FOLDER DIRECTORIES'''
-folderpath = '/Users/xuefeng/Desktop/Peatland/Well_data/Organized/'
+folderpath = 'C:/Users/marie/Desktop/Feng Research/Data/Peatland Water Chemistry/Organized-20211102T181926Z-001/Organized/'
 
 filepath = folderpath + 'consolidated_logger.xlsx'
-notepath = folderpath + 'Raw from Anne/Well notes/Well_Piezo piezometers.xlsx'
+notepath = folderpath + 'Raw from Anne/Well notes/Well_Piezo piezometers_210226.xlsx' #Dates got reconfigured in the new data file -- make sure that they transfer okay
 precippath = folderpath + 'Atm_data/S2_precip2.xlsx'
 BPpath = folderpath + 'Atm_data/S2bog_BP.xlsx'
-bogwellpath = '/Users/xuefeng/Desktop/Peatland/Well_data/edi.562.2/MEF_daily_peatland_water_table.xlsx'
+bogwellpath = 'C:/Users/marie/Desktop/Publications/DOE MEF Water Table Data pub - edi.1126.1/MEF_daily_peatland_water_table.xlsx'
 
 ''' SUPPORTING FUNCTIONS AND DICTIONARIES '''
-elevs0 = {'KF42W': {'2018': 422.660, '2019':422.678, '2020':422.672}, 
-          'KF43W': {'2018': 422.782, '2019':422.810, '2020':422.779}, 
-          'KF45W': {'2018': 422.971, '2019':422.984, '2020':422.974},
+# =============================================================================
+# Old Elevations, See new edits below
+# elevs0 = {'KF42W': {'2018': 422.660, '2019':422.678, '2020':422.672}, 
+#           'KF43W': {'2018': 422.782, '2019':422.810, '2020':422.779}, 
+#           'KF45W': {'2018': 422.971, '2019':422.984, '2020':422.974},
+#           
+#           'S2S1': {'2019': 422.55, '2020':422.566 }, # 2019 can be calculated from S2 Bogwell 
+#           'S2S2': {'2019': 422.57, '2020':422.578 }, 
+#           'S2S3': {'2019': 422.71, '2020':422.721 }, 
+#           
+#           'S6S1': {'2019': 423.427, '2020':423.427}, # 2019 VALUES ARE REPLICATED FOR NOW DUE TO MATCH WITH BOGWELL DATA
+#           'S6S2': {'2019': 423.687, '2020':423.687 }, # CHECK WHY LARGE DIFFERENCE -- LARGE STICK-UP HEIGHT
+#           'S6S3': {'2019': 423.417, '2020':423.417 }, 
+#           
+#           'S6N1': {'2019': 423.384, '2020':423.384 }, # S6 bogwell elevation assumed to result in minimal difference between 2019 - 2020
+#           'S6N2': {'2019': 423.444, '2020':423.444 }, 
+#           'S6N3': {'2019': 423.414, '2020':423.414 }, 
+#           } 
+# =============================================================================
+
+#Adjusted elevations to include 2021 -- still need to check the 2020 data (Xue has the surveying notes)
+elevs0 = {'KF42W': {'2018': 422.66, '2019':422.68, '2020':422.67, '2021':422.69}, 
+          'KF43W': {'2018': 422.78, '2019':422.81, '2020':422.78, '2021':422.77}, 
+          'KF45W': {'2018': 422.97, '2019':422.98, '2020':422.97, '2021':422.96},
           
-          'S2S1': {'2019': 422.55, '2020':422.566 }, # 2019 can be calculated from S2 Bogwell 
-          'S2S2': {'2019': 422.57, '2020':422.578 }, 
-          'S2S3': {'2019': 422.71, '2020':422.721 }, 
+          'S2S1': {'2019': 422.54, '2020':422.57, '2021':422.56}, 
+          'S2S2': {'2019': 422.56, '2020':422.58, '2021':422.57}, 
+          'S2S3': {'2019': 422.70, '2020':422.72, '2021':422.72}, 
           
-          'S6S1': {'2019': 423.427, '2020':423.427}, # 2019 VALUES ARE REPLICATED FOR NOW DUE TO MATCH WITH BOGWELL DATA
-          'S6S2': {'2019': 423.687, '2020':423.687 }, # CHECK WHY LARGE DIFFERENCE -- LARGE STICK-UP HEIGHT
-          'S6S3': {'2019': 423.417, '2020':423.417 }, 
+          'S6S1': {'2019': 423.42, '2020':423.13, '2021': 423.44}, 
+          'S6S2': {'2019': 423.68, '2020':423.08, '2021': 423.71}, 
+          'S6S3': {'2019': 423.41, '2020':423.12, '2021': 423.43}, 
           
-          'S6N1': {'2019': 423.384, '2020':423.384 }, # S6 bogwell elevation assumed to result in minimal difference between 2019 - 2020
-          'S6N2': {'2019': 423.444, '2020':423.444 }, 
-          'S6N3': {'2019': 423.414, '2020':423.414 }, 
+          'S6N1': {'2019': 423.38, '2020':423.08, '2021': 423.41}, 
+          'S6N2': {'2019': 423.44, '2020':423.13, '2021': 423.44}, 
+          'S6N3': {'2019': 423.41, '2020':423.11, '2021': 423.40}, 
           } 
 
 ''' DATA IMPORT '''
@@ -87,6 +120,7 @@ note_time = notes['Date_Time']
 note_dtw = notes['DTW (m)']
 
 # import precip data
+##### Updated through 2021 #####
 precip = pd.read_excel(precippath, sheet_name=year)
 precip_time = precip['TIMESTAMP'][:]
 precip_data = precip['South_PCP'][:]
@@ -97,19 +131,22 @@ precip_time2 = precip_time[istart:iend][::2]
 precip_data2 = precip_data[istart:iend].groupby(precip_data[istart:iend].index // 2).sum() # summed to 1/2 hourly
 
 # import BP data    
+##### Don't have BP data for 2021 or 2022 #####
 BP = pd.read_excel(BPpath, sheet_name=year)
 BP_data = BP['BPnorm_South'][:]  # kPa
 BP_time = BP['TIMESTAMP'][:]
 
 # import bogwell data 
+##### Don't have 2021 or 2022 data for the bog well #####
 bogwell = pd.read_excel(bogwellpath, sheet_name=bogname)
 bogwell_date = bogwell['DATE']
 bogwell_wte = bogwell['WTE']
 
 
-''' NOTE DATA PROCESSING '''
-#find dtw notes closest to each well measurement '''
+### NOTE DATA PROCESSING
+#find dtw notes closest to each well measurement
 # find index in notetime corresponding to given year and wellname
+
 note_wellyear = notes[(notes['Sampler#']==wellname) & (notes['Date_Time'].dt.year == int(year))]
 inote_wellyear = note_wellyear.index
   
@@ -124,10 +161,13 @@ notes_arr[iwell_manual] = note_dtw[inote_wellyear]
 
 
 def patch_and_plot(signal):
-    ''' AUTOMATIC SPIKE DETECTION'''
+    ###AUTOMATIC SPIKE DETECTION
     ispikes, _ = find_peaks(signal, prominence=THRESHOLD, distance=5)
 
-    '''VISUALIZING PATCHING, CHECK WITH MANUAL MEASUREMENTS'''
+    #Print the spikes -- for breakpoint updates
+    print(ispikes)
+    
+    ###VISUALIZING PATCHING, CHECK WITH MANUAL MEASUREMENTS
     plt.figure(figsize=(8,3.5))
     plt.plot(signal)
     plt.plot(ispikes, signal[ispikes], 'x', color='green', label='automatic spikes detected')
@@ -149,9 +189,9 @@ patch_and_plot(logger_temp.values)
 
 #%%
 
-''' MANUALLY EXAMINE BREAKPOINTS & ADD TO DICTIONARY '''
+###MANUALLY EXAMINE BREAKPOINTS & ADD TO DICTIONARY '''
 
-''' PATCHING WATER LEVEL SIGNAL AT BREAKPOINTS ''' 
+###PATCHING WATER LEVEL SIGNAL AT BREAKPOINTS ''' 
 def patch_breakpoints(signal, breakpt_dict):
     # patch spikes before & after -- assume that after is offset to match exactly before
     signal_offset = signal.copy() # replicating water table series
@@ -184,7 +224,7 @@ from breakpt_dicts import wtept_dict, temppt_dict
 logger_wte_offset = patch_breakpoints(logger_level.values, wtept_dict)
 logger_temp_offset = patch_breakpoints(logger_temp.values, temppt_dict)  
 
-''' ATM DATA PROCESSING '''
+##ATM DATA PROCESSING '''
 @numba.jit(nopython=True)
 def atm_data_matching(logger_time, BP_time, BP_data, precip_time, precip_data, bogwell_date, bogwell_wte):
     # find temperature, pressure, bogwell data closest to each well measurement 
@@ -199,12 +239,13 @@ def atm_data_matching(logger_time, BP_time, BP_data, precip_time, precip_data, b
         bog_arr[iw] = bogwell_wte[ibog]
     return atm_arr, bog_arr
 
+#Type casting is converting to int so that the time series can be compared in the data matching
 atm_arr, bog_arr = atm_data_matching(np.array(logger_time).astype(int), 
                                      np.array(BP_time).astype(int), np.array(BP_data), 
                                      np.array(precip_time2).astype(int), np.array(precip_data2), 
                                      np.array(bogwell_date).astype(int), np.array(bogwell_wte))
 
-''' SHIFT TIME SERIES FOR LEVELS, TEMP, BP AT THE BEGINNING, TRUNCATE AT THE END '''
+###SHIFT TIME SERIES FOR LEVELS, TEMP, BP AT THE BEGINNING, TRUNCATE AT THE END '''
 jstart = wtept_dict[wellname][year]['istart'] # at 30-minute intervals
 jend = min(np.argmax(BP_time), np.argmax(logger_time))
 
@@ -220,7 +261,7 @@ bogwell_wte_shifted     = bog_arr[jstart:jend]
 notes_shifted           = notes_arr[jstart:jend]
 iwell_manual_shifted    = np.where(notes_shifted>0)[0]
 
-''' CONSOLIDATE INTO DATAFRAME ''' 
+###CONSOLIDATE INTO DATAFRAME ''' 
 df_all = pd.DataFrame({
                     'DateTime':     time_shifted, 
                     'LoggerLevel':  logger_level_shifted,        # m 
@@ -232,7 +273,7 @@ df_all = pd.DataFrame({
                    })
 
 
-''' CALCULATE ABSOLUTE ELEVATION '''
+###CALCULATE ABSOLUTE ELEVATION '''
 # constants and density functions
 g = 9.81                            # m/s2
 elev0 = elevs0[wellname][year]
@@ -303,6 +344,7 @@ if save:
         writer.close()
     
     df_all['well_elev'] = wt_elev
-    save_to_excel(df_all, path=folderpath + 'processed_wte_atm.xlsx',  sheet_name=wellname+', '+year)
+    save_to_excel(df_all, path = folderpath + 'processed_wte_atm_2.xlsx',  sheet_name=wellname+', '+year)
 
-
+# #print(min(logger_temp_original))
+# #print(min(logger_temp_shifted))
