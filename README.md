@@ -8,9 +8,9 @@ Reserved Package ID: edi.1126.1
 
 **Codes**
 
-Xue_codes - Initial cleaning codes written by Dr. Xue Feng. Includes half the years and some wells, no temperature processing. 
+codes - Cleaning codes developed by XF and adjusted by MJ.  
 
-bin - Updated cleaning codes. Include all years and wells as well as temperature processing. 
+bin - Old cleaning codes. 
 
 **Data Files**
 
@@ -18,4 +18,4 @@ Raw_from_Anne - Level logger data directly from wells at Marcell. Collected by A
 
 consolidated logger.xlsx - Compiled Raw Data. No cleaning
 
-processed_wte_atm.xlsx - Cleaned and Filled Data, needs further QAQC. 
+01_filled_data.xlsx - Cleaned and Filled Data, needs further QAQC. 
