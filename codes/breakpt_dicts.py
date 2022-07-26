@@ -52,7 +52,7 @@ temppt_dict = {'KF42W':{'2018': {'istart':0, 'ibefore':[1102,1154,1494,1733,2020
 # fill_options: 0 - default; linearly interpolate between before and after; 1: patch before and after by calculating offset 
 wtept_dict = {'KF42W':{'2018': {'istart':0, 'ibefore':[1102,1154,1494,1733,2020,3174,4422], 'iafter':[1111,1156,1496,1735,2022,3176,4425], 'fill_opt':[1,0,0,0,0,0,1]},
                          '2019': {'istart':2, 'ibefore':[2197, 4674, 5753, 7348], 'iafter':[2202, 4679, 5758, 7352], 'fill_opt':[0, 0, 0, 1]},
-                         '2020': {'istart':0, 'ibefore':[0], 'iafter':[3], 'fill_opt':[0]}
+                         '2020': {'istart':0, 'ibefore':[0], 'iafter':[3], 'fill_opt':[1]}
                         },
               'KF43W':{'2018': {'istart':0, 'ibefore':[1062, 1153, 1494, 1733,4422], 'iafter':[1064, 1155, 1496, 1735,4425], 'fill_opt':[1,1,1,1,1]},
                          '2019': {'istart':2, 'ibefore':[2299, 4673, 5754, 7345], 'iafter':[2203, 4677, 5758,7352], 'fill_opt':[0, 0, 0, 1]},
@@ -62,31 +62,31 @@ wtept_dict = {'KF42W':{'2018': {'istart':0, 'ibefore':[1102,1154,1494,1733,2020,
                          '2019': {'istart':2, 'ibefore':[282, 3928, 6404, 7483, 9076], 'iafter':[286, 3932, 6408, 7487, 9081], 'fill_opt':[0, 0, 0, 0, 1]},
                          '2020': {'istart':0, 'ibefore':[1810, 4837, 6039, 7231, 7238, 8246, 8588, 9354, 9409], 'iafter':[1814, 4841, 6033, 7235, 7242, 8250, 8592, 9358, 9509], 'fill_opt':[0, 0, 0, 0, 0, 0, 0, 0, 1]}
                          },
-              'S2S1':{'2019': {'istart':38, 'ibefore':[2060], 'iafter':[2063], 'fill_opt':[1]}, 
-                        '2020': {'istart':0, 'ibefore':[0, 1144, 1810], 'iafter':[2, 1148, 1818], 'fill_opt':[0, 0, 0]}
+              'S2S1':{'2019': {'istart':0, 'ibefore':[35, 2060], 'iafter':[39, 2063], 'fill_opt':[1, 1]}, 
+                        '2020': {'istart':0, 'ibefore':[0, 1144, 1810], 'iafter':[2, 1148, 1818], 'fill_opt':[1, 0, 0]}
                         },
-              'S2S2':{'2019': {'istart':38, 'ibefore':[464, 1431, 2058], 'iafter':[468, 1435, 2062], 'fill_opt':[0, 0, 1]},
-                        '2020': {'istart':0, 'ibefore':[0, 1145, 1811, 4839, 4937, 6041, 8232, 8247, 8590, 9311], 'iafter':[2, 1149, 1815, 4843, 4941, 6045, 8236, 8251, 8595, 9315], 'fill_opt':[0, 0, 0, 0, 0, 0, 0, 0, 0, 1]} #Cannot remove the first blip because of the manual checkpoints
+              'S2S2':{'2019': {'istart':0, 'ibefore':[37, 464, 1431, 2058], 'iafter':[39, 468, 1435, 2062], 'fill_opt':[1, 0, 0, 1]},
+                        '2020': {'istart':0, 'ibefore':[0, 1145, 1811, 4839, 4937, 6041, 8232, 8247, 8590, 9311], 'iafter':[2, 1149, 1815, 4843, 4941, 6045, 8236, 8251, 8595, 9315], 'fill_opt':[1, 0, 0, 0, 0, 0, 0, 0, 0, 1]} #Cannot remove the first blip because of the manual checkpoints
                         },
               'S2S3':{'2019': {'istart':39, 'ibefore':[466, 1431, 1815], 'iafter':[470, 1435, 1820], 'fill_opt':[0, 0, 1]},
-                        '2020': {'istart':0, 'ibefore':[0, 1812, 4936, 6042, 8248, 8590, 9311], 'iafter':[2, 1816, 4940, 6046, 8252, 8595, 9316, 9315], 'fill_opt':[0, 0, 0, 0, 0, 0, 0, 1]}
+                        '2020': {'istart':0, 'ibefore':[0, 1812, 4936, 6042, 8248, 8590, 9311], 'iafter':[2, 1816, 4940, 6046, 8252, 8595, 9316, 9315], 'fill_opt':[1, 0, 0, 0, 0, 0, 0, 1]}
                         },
-              'S6N1':{'2019': {'istart':0, 'ibefore':[13], 'iafter':[14], 'fill_opt':[0]}, 
+              'S6N1':{'2019': {'istart':0, 'ibefore':[13], 'iafter':[14], 'fill_opt':[1]}, 
                         '2020': {'istart':0, 'ibefore':[5732], 'iafter':[5734], 'fill_opt':[0]}, # small patch outside of calibration points
                         },
-              'S6N2':{'2019': {'istart':0, 'ibefore':[13], 'iafter':[14], 'fill_opt':[0]}, 
+              'S6N2':{'2019': {'istart':0, 'ibefore':[13], 'iafter':[14], 'fill_opt':[1]}, 
                         '2020': {'istart':0, 'ibefore':[15384], 'iafter':[15385], 'fill_opt':[1]}
                         },
-              'S6N3':{'2019': {'istart':0, 'ibefore':[13], 'iafter':[14], 'fill_opt':[0]}, 
+              'S6N3':{'2019': {'istart':0, 'ibefore':[13], 'iafter':[14], 'fill_opt':[1]}, 
                         '2020': {'istart':0, 'ibefore':[15384], 'iafter':[15385], 'fill_opt':[1]}
                         },
-              'S6S1':{'2019': {'istart':0, 'ibefore':[2, 2023], 'iafter':[3, 2031], 'fill_opt':[0,1]},
+              'S6S1':{'2019': {'istart':0, 'ibefore':[2, 2023], 'iafter':[3, 2031], 'fill_opt':[1,1]},
                         '2020': {'istart':0, 'ibefore':[0, 5375, 9308], 'iafter':[1, 5377, 9317], 'fill_opt':[0,1,1]}
                         },
-              'S6S2':{'2019': {'istart':2, 'ibefore':[431, 1397, 2023], 'iafter':[435, 1401, 2029], 'fill_opt':[0, 0, 1]},
+              'S6S2':{'2019': {'istart':0, 'ibefore':[0, 431, 1397, 2023], 'iafter':[4, 435, 1401, 2029], 'fill_opt':[1, 0, 0, 1]},
                         '2020': {'istart':0, 'ibefore':[0, 5375, 9308], 'iafter':[1, 5377, 9317], 'fill_opt':[0,1,1]}
                         },
-              'S6S3':{'2019': {'istart':0, 'ibefore':[2, 2023], 'iafter':[3, 2029], 'fill_opt':[0, 1]},
+              'S6S3':{'2019': {'istart':0, 'ibefore':[0, 2023], 'iafter':[3, 2029], 'fill_opt':[1, 1]},
                         '2020': {'istart':0, 'ibefore':[0, 1809, 4935, 6039, 8246, 8588, 9308], 'iafter':[1, 1814, 4939, 6043, 8250, 8592, 9317], 'fill_opt':[0, 0, 0, 0, 0, 0, 1]}
                         }
                 }
