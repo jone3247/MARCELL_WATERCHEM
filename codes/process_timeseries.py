@@ -47,7 +47,7 @@ THRESHOLD = 0.25        # for detecting peaks
 PLOT_BAR = 10
 OFFSET_THRESHOLD = 0.025 # m # for accounting for delays in calculating offset when patching
 
-save = True
+save = False
 # plt.close('all')
 
 #%% Import packages, define functions and dictionaries
@@ -56,7 +56,7 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import numpy as np
 from scipy.signal import find_peaks
-import numba
+from numba import jit
 
 ''' FOLDER DIRECTORIES'''
 folderpath = 'C:/Users/marie/Desktop/Feng Research/Data/Peatland Water Chemistry/Organized-20211102T181926Z-001/Organized/'
@@ -127,8 +127,8 @@ precip_data = precip['South_PCP'][:]
 istart = abs(logger_time.iloc[0] - precip_time).argmin()
 iend = abs(logger_time.iloc[-1] - precip_time).argmin()
 # per 1/2 hourly data
-precip_time2 = precip_time[istart:iend][::2]
-precip_data2 = precip_data[istart:iend].groupby(precip_data[istart:iend].index // 2).sum() # summed to 1/2 hourly
+precip_time2 = precip_time[istart:iend][::2].reset_index(drop = True)
+precip_data2 = precip_data[istart:iend].groupby(precip_data[istart:iend].index // 2).sum().reset_index(drop = True) # summed to 1/2 hourly
 
 # import BP data    
 ##### Don't have BP data for 2021 or 2022 #####
@@ -225,25 +225,41 @@ logger_wte_offset = patch_breakpoints(logger_level.values, wtept_dict)
 logger_temp_offset = patch_breakpoints(logger_temp.values, temppt_dict)  
 
 ##ATM DATA PROCESSING '''
-@numba.jit(nopython=True)
+@jit
+def find_closest_date(times, goal):
+    # find the date in an array that is closest to the given date and returen both value and index
+    mintime = abs(times[0] - goal)
+    imintime = 0
+    
+    for ind, d in enumerate(times):
+        t = abs(d - goal) #find difference
+        if t < mintime: #set new
+            mintime = t
+            imintime = ind
+    
+    return imintime, mintime
+    
+@jit
 def atm_data_matching(logger_time, BP_time, BP_data, precip_time, precip_data, bogwell_date, bogwell_wte):
     # find temperature, pressure, bogwell data closest to each well measurement 
     atm_arr = np.zeros((len(logger_time), 2))
     bog_arr = np.zeros(len(logger_time))
+    
     for iw, logt in enumerate(logger_time): 
-        ipressure = np.argmin(np.abs(BP_time - logt))
-        iprecip = np.argmin(np.abs(precip_time - logt))
-        ibog = np.argmin(np.abs(bogwell_date - logt))
+        ipressure, _ = find_closest_date(BP_time, logt) #finds the timestamp in BP data closest to that in the logger time
+        iprecip,_  = find_closest_date(precip_time, logt) #same as above for the precip data
+        ibog, _ = find_closest_date(bogwell_date, logt) #same as above for the bogwell wte
+
         atm_arr[iw, 0] = BP_data[ipressure] #BP_data.iloc[ipressure]
         atm_arr[iw, 1] = precip_data[iprecip] #precip_data.iloc[iprecip]
         bog_arr[iw] = bogwell_wte[ibog]
     return atm_arr, bog_arr
 
 #Type casting is converting to int so that the time series can be compared in the data matching
-atm_arr, bog_arr = atm_data_matching(np.array(logger_time).astype(int), 
-                                     np.array(BP_time).astype(int), np.array(BP_data), 
-                                     np.array(precip_time2).astype(int), np.array(precip_data2), 
-                                     np.array(bogwell_date).astype(int), np.array(bogwell_wte))
+atm_arr, bog_arr = atm_data_matching(logger_time.to_numpy(), 
+                                     BP_time.to_numpy(), BP_data.to_numpy(), 
+                                     precip_time2.to_numpy(), precip_data2.to_numpy(), 
+                                     bogwell_date.to_numpy(), bogwell_wte.to_numpy())
 
 ###SHIFT TIME SERIES FOR LEVELS, TEMP, BP AT THE BEGINNING, TRUNCATE AT THE END '''
 jstart = wtept_dict[wellname][year]['istart'] # at 30-minute intervals
