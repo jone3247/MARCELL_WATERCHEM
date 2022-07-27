@@ -95,7 +95,7 @@ elevs0 = {'KF42W': {'2018': 422.66, '2019':422.68, '2020':422.67}, # '2021':422.
 THRESHOLD = 0.25        # for detecting peaks
 PLOT_BAR = 10
 OFFSET_THRESHOLD = 0.025 # m # for accounting for delays in calculating offset when patching
-save = False
+save = True
 # plt.close('all')
 
 #%% Patch Functions
@@ -350,29 +350,28 @@ for wellname in elevs0:
         plt.title(wellname+', '+year)
         plt.show()
         
-        print(df_all['bogwell'].mean())
+        print(wt_elev.mean())
         
-        # ''' WRITE TO EXCEL '''
-        # # save = True
-        # if save: 
-        #     from openpyxl import load_workbook
-        #     def save_to_excel(df, path, sheet_name): 
-        #         book = load_workbook(path)
-        #         writer = pd.ExcelWriter(path, engine = 'openpyxl')
-        #         writer.book = book
-        #         try:
-        #             book.remove(book[sheet_name])
-        #         except: 
-        #             print('sheet does not exist - new sheet added')
-        #         else: 
-        #             print('replace old sheet')
-        #         finally:
-        #             df.to_excel(writer, sheet_name=sheet_name, index=False)
-        #         writer.save()
-        #         writer.close()
+        ''' WRITE TO EXCEL '''
+        if save: 
+            from openpyxl import load_workbook
+            def save_to_excel(df, path, sheet_name): 
+                book = load_workbook(path)
+                writer = pd.ExcelWriter(path, engine = 'openpyxl')
+                writer.book = book
+                try:
+                    book.remove(book[sheet_name])
+                except: 
+                    print('sheet does not exist - new sheet added')
+                else: 
+                    print('replace old sheet')
+                finally:
+                    df.to_excel(writer, sheet_name=sheet_name, index=False)
+                writer.save()
+                writer.close()
             
-        #     df_all['well_elev'] = wt_elev
-        #     save_to_excel(df_all, path = 'C:/Users/marie/Desktop/Publications/DOE MEF Water Table Data pub - edi.1126.1/edi.1126.1/01_filled_data.xlsx',  sheet_name = wellname + ', ' + year)
+            df_all['well_elev'] = wt_elev
+            save_to_excel(df_all, path = 'C:/Users/marie/Desktop/Publications/DOE MEF Water Table Data pub - edi.1126.1/edi.1126.1/filled_data.xlsx',  sheet_name = wellname + ', ' + year)
         
         # #print(min(logger_temp_original))
         # #print(min(logger_temp_shifted))

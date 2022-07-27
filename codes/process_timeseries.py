@@ -37,9 +37,9 @@ between 2019 and 2020 likely caused by shifts in the surveying (?)
 #%%
 ''' IMPORT & EXPORT OPTIONS '''
 # well and bog selections
-wellname = 'S2S3'
-year = '2020'
-bogname = 'S2'
+wellname = 'S6N3'
+year = '2019'
+bogname = 'S6'
 print(wellname, year)
 
 # spike detection and plotting options
@@ -48,7 +48,6 @@ PLOT_BAR = 10
 OFFSET_THRESHOLD = 0.025 # m # for accounting for delays in calculating offset when patching
 
 save = False
-# plt.close('all')
 
 #%% Import packages, define functions and dictionaries
 
