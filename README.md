@@ -15,13 +15,14 @@ codes - Cleaning codes developed by XF and adjusted by MJ. The designated workfl
 bin - Old cleaning codes. 
 
 **Data Files**
+All supporting data files (precipitation, bog well elevations, barometric pressure, etc.) are available on the EDI page as outlined in the initialization of both `process_timeseries` and `process_timeseries_looped`. Other data provided here is as follows:
 
-Raw_from_Anne - Level logger data directly from wells at Marcell. Collected by Anne G, research technician at the Marcell Experimental Forest. Includes notes about level logger installation/removal and when downloads were taken. 
+- Raw_from_Anne - Level logger data directly from wells at Marcell. Collected by Anne G, research technician at the Marcell Experimental Forest. Includes notes about level logger installation/removal and when downloads were taken. 
 
-consolidated logger.xlsx - Compiled Raw Data. No cleaning.
+- consolidated logger.xlsx - Compiled Raw Data. No cleaning.
 
-filled_data.xlsx - Cleaned and Filled Data, needs further QAQC. 
+- filled_data.xlsx - Cleaned and Filled Data, needs further QAQC. 
 
-manual_na_filled_data.xlsx - Cleaned and Filled Data, also contains NaNs for spikes that could not be removed by the code because they overlapped with manual checks
+- manual_na_filled_data.xlsx - Cleaned and Filled Data, also contains NaNs for spikes that could not be removed by the code because they overlapped with manual checks
 
-final_data.csv - Data published to EDI. 
+- final_data.csv - Data published to EDI. 
