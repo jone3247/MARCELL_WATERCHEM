@@ -24,7 +24,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 ''' DATA IMPORT '''
-filepath = 'C:/Users/marie/Desktop/Publications/DOE MEF Water Table Data pub - edi.1126.1/edi.1126.1/manual_na_filled_data.xlsx'
+filepath = '../manual_na_filled_data.xlsx'
 
 elevs0 = {'KF42W': {'2018': 422.66, '2019':422.68, '2020':422.67}, # '2021':422.69}, 
           'KF43W': {'2018': 422.78, '2019':422.81, '2020':422.78}, # '2021':422.77}, 
@@ -44,7 +44,7 @@ elevs0 = {'KF42W': {'2018': 422.66, '2019':422.68, '2020':422.67}, # '2021':422.
           } 
 
 ''' DATAFRAME FOR CONCAT AND EXPORT'''
-df_all = pd.DataFrame(columns = {
+df_all = pd.DataFrame(columns = [
                     'DateTime', 
                     'LoggerLevel',     # m 
                     'LoggerTemp',      # Celsius
@@ -56,7 +56,7 @@ df_all = pd.DataFrame(columns = {
                     'well_name', 
                     'watershed', 
                     'year'
-                   })
+                   ])
 
 #%%
 # Loop through the available wells in the dictionary
@@ -102,7 +102,12 @@ for wellname in elevs0:
         df_all = pd.concat([df_all, welldata])
 
 #%%
+#Remove DTW column
+df_all = df_all.drop(columns = ['DTW'])
 
+#%%
 ''' EXPORT '''
-pd.to_csv(df_all, path = 'C:/Users/marie/Desktop/Publications/DOE MEF Water Table Data pub - edi.1126.1/edi.1126.1/final_data.csv')
+df_all.to_csv('../final_data.csv')
 
+
+# %%
