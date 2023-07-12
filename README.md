@@ -1,8 +1,11 @@
 ## Marcell Experimental Forest - Well Water Level Data
 
-[Insert abstract summary of the data package here when we have it]
+This data publication contains 30-minute water table elevation and temperature data collected along bog to lagg transects within two watersheds at the Marcell Experimental Forest (MEF) in Itasca County, Minnesota. The bog to lagg transects are located on the north and south sides of S2 and S6 and contain
+three surface water wells each. The water table elevations provide information on the hydraulic gradients that drive flow to and from the bogs.
 
 This repository contains the cleaning codes and raw and processed data for data publication to Environmental Data Initative (EDI). This repository is created for the purpose of increasing reproducibilty and transparency within the science community. If you have questions or suggestions on how to improve this cleaning process please don't hesitate to contact me, MW Jones, here on GitHub or at jone3247@umn.edu. 
+
+If you are interested in exploring this data, stay tuned for an interactive dashboard (coming Fall 2023). 
 
 Reserved Package ID: edi.1126.1
 
